@@ -104,16 +104,64 @@ class Server(commands.Cog):
         
     @commands.command(aliases=['private'])
     async def priv(self, ctx, operation, *, name=''):
-        if operation in ('create', 'c'):
+        if operation.lower() in ('create', 'c'):
             if name == '':
                 name = '{}\'s private channel'.format(ctx.author.name)
 
             return await self.create_private_channel(ctx, name)
 
-        elif operation in ('delete', 'd'):
+        elif operation.lower() in ('delete', 'd'):
             return await self.delete_private_channel(ctx)
 
 
+    async def create_backup(self, ctx):
+        channel_list = [] # Used for only channels in categories to find channels not in categories
+
+        guild = ctx.message.guild
+        guildID = guild.id
+
+        server_dict = {}
+        server_dict['no_category'] = {}
+
+        for category in guild.categories:
+            server_dict[category.name] = {}
+            for channel in category.channels:
+                # test if category has any channels
+                channel_dict = {}
+                channel_dict['type'] = str(channel.type)
+                if channel_dict.get('type') == 'text':
+                    channel_dict['nsfw'] = channel.nsfw
+
+                channel_list.append(channel)
+                server_dict[category.name][channel.name] = channel_dict
+
+        for channel in guild.channels:
+            if not channel in channel_list and channel.name not in server_dict:
+                channel_dict = {}
+                channel_dict['type'] = str(channel.type)
+
+                if channel_dict.get('type') == 'text':
+                    channel_dict['nsfw'] = channel.nsfw
+
+                server_dict['no_category'][channel.name] = channel_dict
+        
+        with open('./cogs/server_backups.json', 'r+') as f:
+            data = json.load(f)
+
+            data[str(guildID)] = server_dict
+
+            f.seek(0)
+            f.truncate(0)
+            json.dump(data, f, indent=4)
+
+
+    @commands.command()
+    async def backup(self, ctx, revert=''):
+        if revert.lower() in ('yes', 'true'):
+            pass
+
+        else:
+            return await self.create_backup(ctx)
 def setup(client):
     client.add_cog(Server(client))
 

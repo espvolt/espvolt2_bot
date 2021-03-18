@@ -11,7 +11,7 @@ client = commands.AutoShardedBot(command_prefix='%', case_insensitive=True)
 @client.event
 async def on_ready():
     print('Bot is ready')
-    
+
 
 for cog in os.listdir('./cogs'):
     if cog.endswith('.py'):
