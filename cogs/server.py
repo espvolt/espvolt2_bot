@@ -126,7 +126,7 @@ class Server(commands.Cog):
         for category in guild.categories:
             server_dict[category.name] = {}
             for channel in category.channels:
-                # test if category has any channels
+                # trying to figure out how to save permissions. but yknow im kinda stupid.
                 channel_dict = {}
                 channel_dict['type'] = str(channel.type)
                 if channel_dict.get('type') == 'text':
@@ -153,15 +153,105 @@ class Server(commands.Cog):
             f.seek(0)
             f.truncate(0)
             json.dump(data, f, indent=4)
+        
+        return
+
+
+    async def revert_backup(self, ctx):
+        guild = ctx.message.guild
+        guildID = guild.id
+
+        with open('./cogs/server_backups.json', 'r+') as f:
+            data = json.load(f)
+            
+            if not str(guildID) in data:
+                return await ctx.send('This server has no backups')
+
+            guild_data = data.get(str(guildID))
+
+        channel_list = []
+
+        for category in guild.categories:
+            if not category.name in guild_data: # Deletes an entire category if its not in the backup json
+                for channel in category.channels:
+                    await channel.delete()
+
+                await category.delete()
+
+            else:
+                category_dict = guild_data.get(category.name)
+
+                for channel in category.channels: # Only deletes channels not in the saved category dictionary
+                    if not channel.name in category_dict: # checks if the name is in the saved dict
+                        await channel.delete()
+                    
+                    else:
+                        channel_list.append(channel) # used to find the channels without a category
+                         
+
+                for channel_name in category_dict: # Iterates though the channels in a category saved in the dictionary
+                    channel_dict = category_dict.get(channel_name) # gets info about the channel
+
+                    channel = discord.utils.get(category.channels, name=channel_name) # checks if the channel is there
+
+                    if channel == None: # if it isnt make one
+                        if channel_dict.get('type') == 'text': # voice channels have no nsfw attribute
+                            channel = await category.create_text_channel(channel_name, nsfw=channel_dict.get('nsfw')) # still trying to find a way to save permissions.
+
+                        else:
+                            channel = await category.create_voice_channel(channel_name)
+
+                        channel_list.append(channel)
+
+        no_category = []
+        category_dict = guild_data.get('no_category')
+
+        for channel in guild.channels: # Delete loop
+            if not channel in channel_list and channel not in guild.categories:
+                
+                if not channel.name in category_dict:
+                    await channel.delete()
+
+                else:
+                    no_category.append(channel.name)
+
+        for channel_name in category_dict:
+            if not channel_name in no_category:
+                channel_dict = category_dict.get(channel_name)
+
+                if channel_dict.get('type') == 'text':
+                    await guild.create_text_channel(channel_name, nsfw=channel_dict.get('nsfw'))
+
+                else:
+                    await guild.create_voice_channel(channel_name)
+
+
+
+
+    
+
+                
+
+
+
+
+        
+
+        
+
+                        
+
 
 
     @commands.command()
     async def backup(self, ctx, revert=''):
-        if revert.lower() in ('yes', 'true'):
-            pass
+        if revert.lower() in ('yes', 'true', 'revert'):
+            return await self.revert_backup(ctx)
 
         else:
             return await self.create_backup(ctx)
+
+
 def setup(client):
     client.add_cog(Server(client))
 
