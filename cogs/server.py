@@ -224,25 +224,8 @@ class Server(commands.Cog):
 
                 else:
                     await guild.create_voice_channel(channel_name)
-
-
-
-
-    
-
-                
-
-
-
-
-        
-
-        
-
-                        
-
-
-
+                    
+                    
     @commands.command()
     async def backup(self, ctx, revert=''):
         if revert.lower() in ('yes', 'true', 'revert'):
