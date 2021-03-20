@@ -21,7 +21,7 @@ class Server(commands.Cog):
         else:
             for category in guild.categories: # Had to use for loop here instead of discord.util.get('private channels') because some of my friends like capitals even though
                 # its uppercase in the view
-                if category.name.lower == 'private channels':
+                if category.name.lower() == 'private channels':
                     break
         
         with open('./jsons/private_channels.json', 'r+') as f:
