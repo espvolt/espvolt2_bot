@@ -25,7 +25,7 @@ class Chat(commands.Cog):
             curse_count += len(curse_array)
 
         if curse_count > 0: # dont want to save everyone to a json even if they dont even curse
-            with open('cogs/curse_counter.json', 'r+') as f:
+            with open('./jsons/curse_counter.json', 'r+') as f:
                 data = json.load(f)
 
                 

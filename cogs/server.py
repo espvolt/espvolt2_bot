@@ -24,7 +24,7 @@ class Server(commands.Cog):
                 if category.name.lower == 'private channels':
                     break
         
-        with open('./cogs/private_channels.json', 'r+') as f:
+        with open('./jsons/private_channels.json', 'r+') as f:
             data = json.load(f)
 
             if str(guild_id) in data:
@@ -76,7 +76,7 @@ class Server(commands.Cog):
         guild = ctx.message.guild
         guild_id = guild.id
 
-        with open('./cogs/private_channels.json', 'r+') as f:
+        with open('./jsons/private_channels.json', 'r+') as f:
             data = json.load(f)
 
             if not str(guild_id) in data:
@@ -145,7 +145,7 @@ class Server(commands.Cog):
 
                 server_dict['no_category'][channel.name] = channel_dict
         
-        with open('./cogs/server_backups.json', 'r+') as f:
+        with open('./jsons/server_backups.json', 'r+') as f:
             data = json.load(f)
 
             data[str(guildID)] = server_dict
@@ -161,7 +161,7 @@ class Server(commands.Cog):
         guild = ctx.message.guild
         guildID = guild.id
 
-        with open('./cogs/server_backups.json', 'r+') as f:
+        with open('./jsons/server_backups.json', 'r+') as f:
             data = json.load(f)
             
             if not str(guildID) in data:
@@ -224,8 +224,8 @@ class Server(commands.Cog):
 
                 else:
                     await guild.create_voice_channel(channel_name)
-                    
-                    
+
+
     @commands.command()
     async def backup(self, ctx, revert=''):
         if revert.lower() in ('yes', 'true', 'revert'):
