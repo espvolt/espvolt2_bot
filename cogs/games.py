@@ -75,7 +75,11 @@ class Games(commands.Cog):
                 return await ctx.send('You have no game to start')
 
             game_dict = data.get(str(authorID))
-            players = [int(player) for player in game_dict.get('players')] # Since the player ID are string i turn them back to int but 
+            players = [int(player) for player in game_dict.get('players')] # Since the player ID are string i turn them back to int but
+
+            if len(players) == 0:
+                return await ctx.send('Nobody has joined your game.') 
+                
             players.insert(0, authorID) # authorID is already int so no need for int()
 
             game_type = game_dict.get('type')
@@ -87,8 +91,8 @@ class Games(commands.Cog):
             json.dump(data, f, indent=4)
 
             await ctx.send('Your game has started')
-            return await self.games.get(game_type)(players) # calls the function
+            return await self.games.get(game_type)(self.client, players) # calls the function
             
-            
+
 def setup(client):
     client.add_cog(Games(client))
