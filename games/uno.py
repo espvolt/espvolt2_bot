@@ -52,4 +52,4 @@ async def uno(client, players):
     # iterate over messages to edit all of them.
     
     while not len(in_game) in (0, 1): # makes sure the game has players
-        await asyncio.sleep(1000)
+        await asyncio.sleep(1000) # prevents crashes
