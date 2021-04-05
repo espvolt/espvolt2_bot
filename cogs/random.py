@@ -61,7 +61,7 @@ class Random(commands.Cog):
       if laser_chance <= .02:
          return await ctx.send('I choose laser, i win.')
 
-      return await ctx.send('I choose {0}, {1}'.format(choice, possible_outcomes.get(choice).get(user_input)))
+      return await ctx.send('I choose {0}, {1}'.format(choice, possible_outcomes.get(choice).get(user_input[0])))
 
 
 def setup(client):
