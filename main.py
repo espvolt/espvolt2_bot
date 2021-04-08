@@ -38,7 +38,7 @@ async def on_ready():
     with open('./logs/log.txt', 'w+') as f:
         f.write('Host has opened logs at {} UTC\n\n'.format(datetime.utcnow()))
 
-    print('Bot is ready')
+    print('\nBot is ready')
 
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="https://github.com/espvolt/espvolt2_bot")) 
     # stolen from https://stackoverflow.com/questions/59126137/how-to-change-discord-py-bot-activity

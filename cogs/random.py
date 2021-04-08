@@ -66,3 +66,4 @@ class Random(commands.Cog):
 
 def setup(client):
    client.add_cog(Random(client))
+   
